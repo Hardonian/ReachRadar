@@ -5,7 +5,7 @@ import {
   SCORING_WEIGHTS,
   getConfidenceLabel,
 } from "@reachradar/config";
-import { ShiftComponentScores, ShiftEvent } from "@reachradar/domain";
+import { ShiftComponentScores } from "@reachradar/domain";
 import { median, calculateHerfindahlIndex } from "../stats/robust-stats.js";
 import { evaluatePersistence } from "../stats/persistence.js";
 import { calculateCusum } from "../stats/cusum.js";

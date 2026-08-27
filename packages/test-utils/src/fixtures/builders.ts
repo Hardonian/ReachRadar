@@ -2,8 +2,6 @@ import {
   Organization,
   UserProfile,
   YouTubeChannel,
-  ChannelDailyMetric,
-  ShiftEvent,
 } from "@reachradar/domain";
 
 export function createMockUserProfile(overrides: Partial<UserProfile> = {}): UserProfile {

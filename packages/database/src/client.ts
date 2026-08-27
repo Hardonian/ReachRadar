@@ -1,7 +1,6 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { getServerEnv } from "@reachradar/config";
 
-let serverClient: SupabaseClient | null = null;
 let adminClient: SupabaseClient | null = null;
 
 /**

@@ -1,4 +1,4 @@
-import { Job, JobState, JobType } from "@reachradar/domain";
+import { Job, JobType } from "@reachradar/domain";
 
 export interface EnqueueOptions {
   availableAt?: Date;

@@ -21,7 +21,6 @@ export function evaluateChannelImpact(
     channelViewsDeltaPct,
     cohortViewsDeltaPct,
     channelCtrDeltaPct = 0,
-    channelAvdDeltaPct = 0,
     channelSurfaceDeltas = {},
     channelHistoryDays,
     shiftConfidenceScore,

@@ -475,7 +475,7 @@ export class BacktestHarness {
     };
 
     const res = evaluateShiftEnsemble(input);
-    const passed = !res.isPubliclyVisible && res.suppressionReason?.includes("concentration");
+    const passed = !res.isPubliclyVisible && Boolean(res.suppressionReason?.includes("concentration"));
 
     return {
       scenarioId: "SCENARIO_9_HIGH_CONCENTRATION",
