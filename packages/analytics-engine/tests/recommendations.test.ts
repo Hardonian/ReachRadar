@@ -17,7 +17,8 @@ describe("Deterministic Recommendation Engine", () => {
 
     expect(rec.action).toBe("HOLD_STRATEGY");
     expect(rec.confidence).toBeGreaterThanOrEqual(80);
-    expect(rec.rationale).toContain("Browse");
+    expect(rec.rationale).toContain("broad matched cohort");
+    expect(rec.evidencePoints.some((e) => e.includes("Browse"))).toBe(true);
   });
 
   it("recommends REVIEW_PACKAGING when channel views & CTR drop while cohort is stable", () => {
@@ -33,7 +34,8 @@ describe("Deterministic Recommendation Engine", () => {
     });
 
     expect(rec.action).toBe("REVIEW_PACKAGING");
-    expect(rec.rationale).toContain("CTR");
+    expect(rec.rationale).toContain("click-through");
+    expect(rec.evidencePoints.some((e) => e.includes("CTR"))).toBe(true);
   });
 
   it("recommends DOUBLE_DOWN when channel outperforms during a cohort-wide shift", () => {
