@@ -44,8 +44,8 @@ reachradar/
 ## 🚀 Quick Start
 
 ### Prerequisites
-- Node.js `20.x` or higher
-- `pnpm` `9.x` or `10.x`
+- Node.js `22.x`
+- `pnpm` `11.8.0` (Corepack will select the pinned version)
 - Optional: Supabase CLI / PostgreSQL 15+ for local database
 
 ### 1. Installation
@@ -63,6 +63,14 @@ cp .env.example .env.local
 pnpm dev
 ```
 Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+### Vercel
+
+Import the repository at its root. The checked-in `vercel.json` installs the full
+pnpm workspace, builds only the web app and its internal dependencies, publishes
+`apps/web/.next`, and invokes the authenticated job worker every 15 minutes. Add
+the production variables listed in [the deployment guide](docs/DEPLOYMENT.md)
+before promoting the deployment.
 
 ---
 
