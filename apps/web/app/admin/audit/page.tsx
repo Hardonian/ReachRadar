@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function AdminAuditLogPage() {
   const logs = [
     { action: "channel.connected", actor: "alex@riveramedia.io", target: "Capital Horizon (finance)", time: "18m ago" },

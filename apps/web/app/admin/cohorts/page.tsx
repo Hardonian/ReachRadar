@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function AdminCohortsPage() {
   const cohorts = [
     { name: "YouTube Global Baseline", channels: 240, owners: 160, hhi: "0.02", status: "PUBLIC" },

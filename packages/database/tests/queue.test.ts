@@ -27,7 +27,7 @@ describe("Transactional Job Queue", () => {
   it("handles failure retries and transitions to dead letter after max attempts", async () => {
     const queue = new InMemoryJobQueue();
     const job = await queue.enqueue(
-      "youtube.sync",
+      "youtube.incremental_sync",
       { channelId: "ch_1" },
       { maxAttempts: 2 }
     );

@@ -1,3 +1,5 @@
+import React from "react";
+
 export default function AdminBillingPage() {
   return (
     <div className="space-y-8 font-mono text-xs">
