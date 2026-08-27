@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { BacktestHarness } from "../src/backtest/backtest-harness";
+import { BacktestHarness } from "../src/backtest/backtest-harness.js";
 
 describe("Backtest Benchmark Harness", () => {
-  it("evaluates precision, recall, and detection latency across 10 benchmark scenarios", async () => {
+  it("evaluates precision, recall, and detection latency across 10 benchmark scenarios", () => {
     const harness = new BacktestHarness();
-    const benchmark = await harness.runBenchmark();
+    const benchmark = harness.runAllScenarios();
 
     expect(benchmark.totalScenarios).toBe(10);
     expect(benchmark.precision).toBeGreaterThanOrEqual(0.8);
