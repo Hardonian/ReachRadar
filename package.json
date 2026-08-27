@@ -1,0 +1,31 @@
+{
+  "name": "reachradar-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.8.0",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
+    "test:rls": "turbo run test:rls",
+    "test:backtest": "turbo run test:backtest",
+    "test:e2e": "turbo run test:e2e",
+    "check": "turbo run lint typecheck test build",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,css,sql}\"",
+    "clean": "turbo run clean && rimraf node_modules"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "prettier": "^3.5.2",
+    "rimraf": "^6.0.1",
+    "turbo": "^2.4.4",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
