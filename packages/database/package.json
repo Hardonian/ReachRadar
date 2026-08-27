@@ -16,6 +16,9 @@
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/ --ext .ts || true",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/encryption.test.ts tests/queue.test.ts",
+    "test:rls": "vitest run tests/rls.test.ts",
     "clean": "rimraf dist"
   },
   "dependencies": {
@@ -27,6 +30,7 @@
   "devDependencies": {
     "@types/node": "^22.13.5",
     "rimraf": "^6.0.1",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.7"
   }
 }
