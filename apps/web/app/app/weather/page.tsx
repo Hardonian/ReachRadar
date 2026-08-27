@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { WeatherGauge, SurfaceCard, ShiftBadge, SeismographTicker, RadarScanner } from "@reachradar/ui";
 import { DEMO_PUBLIC_SHIFTS } from "@reachradar/providers";
-import { Radar, Filter, RefreshCw, ArrowRight, ExternalLink, Globe, Activity, ShieldCheck, Zap } from "lucide-react";
+import { Radar, Radio, Filter, RefreshCw, ArrowRight, ExternalLink, Globe, Activity, ShieldCheck, Zap } from "lucide-react";
 
 export default function InternalWeatherStationPage() {
   const [selectedNiche, setSelectedNiche] = useState<string>("all");

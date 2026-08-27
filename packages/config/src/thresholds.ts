@@ -147,8 +147,8 @@ export function getConfidenceLabel(score: number): ConfidenceLabelInfo {
 // Scoring Weights Version 2.0.0 (Ensemble with Bayesian & Negative Controls)
 export const SCORING_VERSION = "2.0.0";
 export const SCORING_WEIGHTS = {
-  effectMagnitude: 0.18,
-  cohortConsensus: 0.18,
+  effectMagnitude: 0.16,
+  cohortConsensus: 0.16,
   persistence: 0.14,
   bayesianConfidence: 0.12,
   negativeControlStability: 0.10,
@@ -156,6 +156,7 @@ export const SCORING_WEIGHTS = {
   ownerDiversity: 0.08,
   crossMetricCoherence: 0.06,
   surfaceConcentration: 0.06,
+  demandIndependence: 0.04,
 } as const;
 
 // ReachRadar Algorithm Index (RAX) Configuration
