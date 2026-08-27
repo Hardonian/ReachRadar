@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { FileText, Download, Printer, Calendar, ArrowRight } from "lucide-react";
 

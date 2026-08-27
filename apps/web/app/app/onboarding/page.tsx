@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Logo } from "@reachradar/ui";
@@ -17,7 +17,7 @@ import {
   Lock,
 } from "lucide-react";
 
-export default function OnboardingWizardPage() {
+function OnboardingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialPlan = searchParams.get("plan") || "creator";
@@ -298,5 +298,13 @@ export default function OnboardingWizardPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OnboardingWizardPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#070A12] text-slate-100 flex items-center justify-center font-mono text-xs">Loading onboarding...</div>}>
+      <OnboardingContent />
+    </Suspense>
   );
 }
