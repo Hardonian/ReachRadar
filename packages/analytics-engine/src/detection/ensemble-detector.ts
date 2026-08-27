@@ -205,7 +205,12 @@ export function evaluateShiftEnsemble(
 
   const finalEvidenceScore = Math.max(0, Math.min(100, Math.round(rawScore)));
   const confidenceInfo = getConfidenceLabel(finalEvidenceScore);
-  const shiftDetected = isPubliclyVisible && finalEvidenceScore >= 60 && Math.abs(medianDelta) >= 8;
+  const shiftDetected =
+    isPubliclyVisible &&
+    finalEvidenceScore >= 60 &&
+    Math.abs(medianDelta) >= 8 &&
+    demandIndependenceScore >= 40 &&
+    persistenceScore >= 50;
 
   // Metrics that did not change
   const metricsThatDidNotChange: string[] = [];
