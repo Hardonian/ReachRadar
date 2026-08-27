@@ -144,17 +144,34 @@ export function getConfidenceLabel(score: number): ConfidenceLabelInfo {
   return CONFIDENCE_LABELS.STRONG_SIGNAL;
 }
 
-// Scoring Weights Version 1.0.0
-export const SCORING_VERSION = "1.0.0";
+// Scoring Weights Version 2.0.0 (Ensemble with Bayesian & Negative Controls)
+export const SCORING_VERSION = "2.0.0";
 export const SCORING_WEIGHTS = {
-  effectMagnitude: 0.20,
-  cohortConsensus: 0.20,
-  persistence: 0.15,
-  sampleQuality: 0.10,
-  ownerDiversity: 0.10,
-  crossMetricCoherence: 0.10,
-  surfaceConcentration: 0.10,
-  demandIndependence: 0.05,
+  effectMagnitude: 0.18,
+  cohortConsensus: 0.18,
+  persistence: 0.14,
+  bayesianConfidence: 0.12,
+  negativeControlStability: 0.10,
+  sampleQuality: 0.08,
+  ownerDiversity: 0.08,
+  crossMetricCoherence: 0.06,
+  surfaceConcentration: 0.06,
+} as const;
+
+// ReachRadar Algorithm Index (RAX) Configuration
+export const RAX_WEIGHTS = {
+  youtubeBrowse: 0.35,
+  youtubeSuggested: 0.25,
+  youtubeShorts: 0.20,
+  tiktokFeed: 0.10,
+  instagramReels: 0.10,
+} as const;
+
+// Sequential Probability Ratio Test (SPRT) Default Thresholds
+export const SPRT_CONFIG = {
+  alpha: 0.01, // Type I error (false positive target: 1%)
+  beta: 0.05, // Type II error (false negative target: 5%)
+  minShiftSigma: 1.25, // Effect size in standard deviations
 } as const;
 
 // Data Quality Tiers

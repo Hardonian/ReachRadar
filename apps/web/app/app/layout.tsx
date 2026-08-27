@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Logo } from "@reachradar/ui";
-import { brand } from "@reachradar/config";
+import { Logo, CopilotDrawer } from "@reachradar/ui";
 import {
   LayoutDashboard,
   Radar,
@@ -20,22 +19,27 @@ import {
   Menu,
   X,
   ExternalLink,
-  ChevronDown,
   Sparkles,
+  Terminal,
+  Radio,
+  Layers,
 } from "lucide-react";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [copilotOpen, setCopilotOpen] = useState(false);
 
   const navigation = [
     { name: "Overview", href: "/app", icon: LayoutDashboard },
-    { name: "YouTube Weather", href: "/app/weather", icon: Radar },
+    { name: "Algorithm Weather & RAX", href: "/app/weather", icon: Radar },
     { name: "Detected Shifts", href: "/app/shifts", icon: Activity },
+    { name: "Packaging Simulator", href: "/app/simulator", icon: Sparkles },
+    { name: "Portfolio Roster", href: "/app/portfolio", icon: Briefcase },
     { name: "My Channels", href: "/app/channels", icon: Tv },
-    { name: "Portfolio", href: "/app/portfolio", icon: Briefcase },
-    { name: "Alerts", href: "/app/alerts", icon: Bell },
-    { name: "Reports", href: "/app/reports", icon: FileText },
+    { name: "Developer API", href: "/app/developer", icon: Terminal },
+    { name: "Alerts & Webhooks", href: "/app/alerts", icon: Bell },
+    { name: "Reports & Briefs", href: "/app/reports", icon: FileText },
     { name: "Team", href: "/app/team", icon: Users },
     { name: "Integrations", href: "/app/integrations", icon: Key },
     { name: "Billing", href: "/app/billing", icon: CreditCard },
@@ -49,12 +53,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <Link href="/app">
           <Logo size="sm" />
         </Link>
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white"
-        >
-          {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setCopilotOpen(true)}
+            className="p-1.5 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-500/30 flex items-center gap-1 text-xs font-mono font-bold"
+          >
+            <Sparkles className="w-4 h-4 text-sky-400" />
+            <span>Ask Radar</span>
+          </button>
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="p-1.5 rounded-lg border border-slate-800 text-slate-400 hover:text-white"
+          >
+            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Sidebar Navigation */}
@@ -63,7 +76,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         }`}
       >
-        <div>
+        <div className="overflow-y-auto pr-1">
           <div className="px-2 py-3 mb-4">
             <Link href="/" className="inline-block">
               <Logo size="md" />
@@ -71,16 +84,32 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           {/* Org / Workspace Selector */}
-          <div className="mb-6 px-2">
+          <div className="mb-4 px-2">
             <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-2.5 flex items-center justify-between">
               <div className="truncate">
                 <div className="text-[10px] font-mono uppercase font-bold text-slate-500">Workspace</div>
                 <div className="text-xs font-bold text-slate-200 truncate">Rivera Media Group</div>
               </div>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-500/20 text-sky-300 border border-sky-500/30">
                 PRO
               </span>
             </div>
+          </div>
+
+          {/* Ask Radar AI Trigger in Sidebar */}
+          <div className="mb-4 px-2">
+            <button
+              onClick={() => setCopilotOpen(true)}
+              className="w-full p-2.5 rounded-xl bg-gradient-to-r from-sky-950/80 to-indigo-950/80 hover:from-sky-900/80 hover:to-indigo-900/80 border border-sky-800/60 text-sky-200 text-xs font-mono font-bold flex items-center justify-between transition-all group shadow-md"
+            >
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-sky-400 animate-pulse" />
+                <span>Ask Radar Copilot</span>
+              </div>
+              <span className="text-[9px] px-1.5 py-0.5 rounded bg-sky-900/80 text-sky-300 font-mono">
+                AI
+              </span>
+            </button>
           </div>
 
           {/* Nav items */}
@@ -99,11 +128,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                     isActive
-                      ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold"
+                      ? "bg-sky-500/15 text-sky-300 border border-sky-500/30 font-bold"
                       : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/60"
                   }`}
                 >
-                  <Icon className={`w-4 h-4 ${isActive ? "text-emerald-400" : "text-slate-500"}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? "text-sky-400" : "text-slate-500"}`} />
                   <span>{item.name}</span>
                 </Link>
               );
@@ -111,14 +140,14 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           </nav>
         </div>
 
-        {/* Bottom Status & Demo badge */}
-        <div className="space-y-3 pt-4 border-t border-slate-800/80 px-2">
+        {/* Bottom Status & User */}
+        <div className="space-y-3 pt-4 border-t border-slate-800/80 px-2 shrink-0">
           <div className="flex items-center justify-between text-[11px] font-mono text-slate-400">
             <span className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
               Radar Active
             </span>
-            <span className="text-emerald-400">NORMAL (27)</span>
+            <span className="text-amber-400 font-bold">RAX 44.8</span>
           </div>
 
           <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-2.5 flex items-center justify-between text-xs">
@@ -139,19 +168,24 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         <div className="border-b border-slate-800/60 bg-[#0A0E17]/60 px-6 py-2 flex items-center justify-between text-xs font-mono text-slate-400 overflow-x-auto gap-4">
           <div className="flex items-center gap-4 shrink-0">
             <span>
-              YouTube Weather: <strong className="text-emerald-400">CALM (27/100)</strong>
+              Global Weather: <strong className="text-amber-400">ELEVATED (RAX: 44.8)</strong>
             </span>
             <span>·</span>
             <span>
-              Browse: <strong className="text-slate-300">18 (Stable)</strong>
+              Browse: <strong className="text-rose-400">58.2 (Contraction)</strong>
             </span>
             <span>·</span>
             <span>
-              Shorts: <strong className="text-orange-400">74 (Elevated)</strong>
+              Shorts: <strong className="text-amber-400">42.1 (Active)</strong>
+            </span>
+            <span>·</span>
+            <span>
+              TikTok: <strong className="text-emerald-400">35.4 (Calm)</strong>
             </span>
           </div>
-          <div className="shrink-0 text-slate-500">
-            Telemetry Updated: 18 min ago
+          <div className="shrink-0 flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="text-slate-400">Streaming Live Telemetry</span>
           </div>
         </div>
 
@@ -159,6 +193,18 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           {children}
         </div>
       </div>
+
+      {/* Floating Ask Radar AI Copilot Trigger */}
+      <button
+        onClick={() => setCopilotOpen(true)}
+        className="fixed bottom-6 right-6 z-40 px-4 py-3 rounded-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-500 hover:to-indigo-500 text-white font-mono text-xs font-bold shadow-2xl flex items-center gap-2.5 transition-all hover:scale-105 border border-sky-400/30"
+      >
+        <Sparkles className="w-4 h-4 animate-pulse" />
+        <span>Ask Radar AI</span>
+      </button>
+
+      {/* Ask Radar Copilot Drawer */}
+      <CopilotDrawer isOpen={copilotOpen} onClose={() => setCopilotOpen(false)} />
     </div>
   );
 }

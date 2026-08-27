@@ -8,4 +8,7 @@ export * from "./entities/alert.js";
 export * from "./entities/report.js";
 export * from "./entities/job.js";
 export * from "./entities/billing.js";
+export * from "./entities/simulator.js";
+export * from "./entities/copilot.js";
+export * from "./entities/briefing.js";
 export * from "./providers/contracts.js";

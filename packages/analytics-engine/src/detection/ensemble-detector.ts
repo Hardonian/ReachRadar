@@ -5,11 +5,15 @@ import {
   SCORING_WEIGHTS,
   getConfidenceLabel,
 } from "@reachradar/config";
-import { ShiftComponentScores } from "@reachradar/domain";
+import { ShiftComponentScores, BayesianChangePointResult } from "@reachradar/domain";
 import { median, calculateHerfindahlIndex } from "../stats/robust-stats.js";
 import { evaluatePersistence } from "../stats/persistence.js";
 import { calculateCusum } from "../stats/cusum.js";
 import { calculateEwma } from "../stats/ewma.js";
+import { detectBayesianChangePoint } from "../stats/bayesian-changepoint.js";
+import { decomposeSeasonality } from "../stats/seasonality.js";
+import { auditNegativeControls } from "../stats/negative-controls.js";
+import { calculateSprt } from "../stats/sprt.js";
 
 export interface ChannelDeviationInput {
   channelId: string;
@@ -49,6 +53,7 @@ export interface DetectionEnsembleResult {
   surfaceMovements: Record<string, number>;
   metricsThatDidNotChange: string[];
   alternativeExplanations: string[];
+  bayesianEvidence?: BayesianChangePointResult;
   whatChanged: string;
   whereItChanged: string;
   whoAppearsAffected: string;
@@ -68,17 +73,14 @@ export function evaluateShiftEnsemble(
   const distinctOwners = Object.keys(ownerCounts).length;
   const ownerShares = Object.values(ownerCounts);
   const herfindahl = calculateHerfindahlIndex(ownerShares);
-  // Owner diversity score: 1.0 - HHI (scaled 0 - 100)
   const ownerDiversityScore = Math.max(0, Math.min(100, (1.0 - herfindahl) * 125));
 
-  // 2. Effect Magnitude (20%)
+  // 2. Effect Magnitude
   const deltas = channelDeviations.map((c) => c.viewsDeltaPct);
   const medianDelta = median(deltas);
-  // Scale absolute median delta (e.g. 25% shift -> 100 score)
   const effectMagnitudeScore = Math.min(100, Math.abs(medianDelta) * 4);
 
-  // 3. Cohort Consensus (20%)
-  // Proportion of channels with significant move in the dominant direction (drop or surge)
+  // 3. Cohort Consensus
   const isNegativeShift = medianDelta < 0;
   const channelsInSameDirection = channelDeviations.filter((c) =>
     isNegativeShift ? c.viewsDeltaPct < -5 : c.viewsDeltaPct > 5
@@ -87,7 +89,7 @@ export function evaluateShiftEnsemble(
   const cohortConsensusScore = Math.min(100, consensusRatio * 100);
   const affectedPct = Math.round(consensusRatio * 100);
 
-  // 4. Persistence (15%)
+  // 4. Persistence (CUSUM, EWMA, Persistence evaluation)
   const persistenceEval = evaluatePersistence(cohortDailyZScores);
   const cusumEval = calculateCusum(cohortTimeSeriesViews);
   const ewmaEval = calculateEwma(cohortTimeSeriesViews);
@@ -98,7 +100,17 @@ export function evaluateShiftEnsemble(
       ewmaEval.momentum * 0.2
   );
 
-  // 5. Sample Quality (10%)
+  // 5. Bayesian Change Point & SPRT Integration
+  const bayesianResult = detectBayesianChangePoint(cohortTimeSeriesViews);
+  const sprtResult = calculateSprt(cohortTimeSeriesViews);
+  const bayesianConfidenceScore = Math.round(
+    bayesianResult.posteriorProbability * 70 + (sprtResult.decision === "SHIFT_DETECTED" ? 30 : 0)
+  );
+
+  // 6. Seasonality & Holiday Filtering
+  const seasonalityEval = decomposeSeasonality(cohortTimeSeriesViews);
+
+  // 7. Sample Quality
   const avgHistoryDays =
     channelCount > 0
       ? channelDeviations.reduce((sum, c) => sum + c.historyDays, 0) / channelCount
@@ -107,8 +119,7 @@ export function evaluateShiftEnsemble(
   const sampleCountQuality = Math.min(1.0, channelCount / MIN_PUBLIC_CHANNELS);
   const sampleQualityScore = (historyQuality * 0.5 + sampleCountQuality * 0.5) * 100;
 
-  // 6. Cross-Metric Coherence (10%)
-  // For a pure distribution shift, impressions/views drop while CTR and retention remain largely steady (within ±5%)
+  // 8. Cross-Metric Coherence
   let steadyContentCount = 0;
   for (const c of channelDeviations) {
     const ctrSteady = c.ctrDeltaPct === undefined || Math.abs(c.ctrDeltaPct) < 8;
@@ -120,13 +131,13 @@ export function evaluateShiftEnsemble(
   const coherenceRatio = channelCount > 0 ? steadyContentCount / channelCount : 0.5;
   const crossMetricCoherenceScore = coherenceRatio * 100;
 
-  // 7. Surface Concentration (10%)
-  // Evaluate movements per surface across channels
+  // 9. Surface Concentration & Flow
   const surfaceDeltasAgg: Record<string, number[]> = {
     browse: [],
     suggested: [],
     search: [],
     shorts: [],
+    notifications: [],
   };
   for (const c of channelDeviations) {
     if (c.surfaceDeltas) {
@@ -150,14 +161,23 @@ export function evaluateShiftEnsemble(
   }
   const surfaceConcentrationScore = Math.min(100, maxAbsSurfaceDelta * 3.5);
 
-  // 8. Demand Independence (5%)
-  let demandIndependenceScore = 80; // default if demand signal is unavailable (renormalized)
+  // 10. Negative Control Invariant Verification
+  const negControlAudit = auditNegativeControls({
+    searchViewsDeltaPct: surfaceMovements.search || 0,
+    directTrafficDeltaPct: 0.5,
+    notificationViewsDeltaPct: surfaceMovements.notifications || 0,
+    browseViewsDeltaPct: surfaceMovements.browse || 0,
+    suggestedViewsDeltaPct: surfaceMovements.suggested || 0,
+  });
+  const negativeControlStability = negControlAudit.negativeControlStabilityScore;
+
+  // 11. Demand Independence
+  let demandIndependenceScore = 80;
   if (externalDemandCorrelation !== undefined && externalDemandCorrelation !== null) {
-    // High positive correlation (>0.6) with external demand means views dropped because people stopped searching for the topic
     if (externalDemandCorrelation > 0.6) {
-      demandIndependenceScore = 20; // Lower evidence for platform algorithm shift
+      demandIndependenceScore = 20;
     } else if (externalDemandCorrelation < 0.2) {
-      demandIndependenceScore = 95; // High evidence that shift is internal to platform
+      demandIndependenceScore = 95;
     } else {
       demandIndependenceScore = 60;
     }
@@ -167,6 +187,8 @@ export function evaluateShiftEnsemble(
     effectMagnitude: Math.round(effectMagnitudeScore),
     cohortConsensus: Math.round(cohortConsensusScore),
     persistence: Math.round(persistenceScore),
+    bayesianConfidence: Math.round(bayesianConfidenceScore),
+    negativeControlStability: Math.round(negativeControlStability),
     sampleQuality: Math.round(sampleQualityScore),
     ownerDiversity: Math.round(ownerDiversityScore),
     crossMetricCoherence: Math.round(crossMetricCoherenceScore),
@@ -179,11 +201,17 @@ export function evaluateShiftEnsemble(
     componentScores.effectMagnitude * SCORING_WEIGHTS.effectMagnitude +
     componentScores.cohortConsensus * SCORING_WEIGHTS.cohortConsensus +
     componentScores.persistence * SCORING_WEIGHTS.persistence +
+    (componentScores.bayesianConfidence ?? 70) * (SCORING_WEIGHTS.bayesianConfidence ?? 0.12) +
+    (componentScores.negativeControlStability ?? 80) * (SCORING_WEIGHTS.negativeControlStability ?? 0.10) +
     componentScores.sampleQuality * SCORING_WEIGHTS.sampleQuality +
     componentScores.ownerDiversity * SCORING_WEIGHTS.ownerDiversity +
     componentScores.crossMetricCoherence * SCORING_WEIGHTS.crossMetricCoherence +
-    componentScores.surfaceConcentration * SCORING_WEIGHTS.surfaceConcentration +
-    componentScores.demandIndependence * SCORING_WEIGHTS.demandIndependence;
+    componentScores.surfaceConcentration * SCORING_WEIGHTS.surfaceConcentration;
+
+  // If seasonality decomposition detects this is just a routine Day-of-Week dip, damp raw score
+  if (seasonalityEval.isSeasonalDip) {
+    rawScore *= 0.55;
+  }
 
   // Hard eligibility gates & score caps
   let suppressionReason: string | null = null;
@@ -192,7 +220,7 @@ export function evaluateShiftEnsemble(
   if (channelCount < MIN_PUBLIC_CHANNELS) {
     isPubliclyVisible = false;
     suppressionReason = `Cohort channel count (${channelCount}) is below privacy minimum (${MIN_PUBLIC_CHANNELS})`;
-    rawScore = Math.min(rawScore, 45); // Capped at WATCH / LOW_SIGNAL
+    rawScore = Math.min(rawScore, 45);
   } else if (distinctOwners < MIN_DISTINCT_OWNERS) {
     isPubliclyVisible = false;
     suppressionReason = `Distinct owner count (${distinctOwners}) is below minimum requirement (${MIN_DISTINCT_OWNERS})`;
@@ -210,7 +238,8 @@ export function evaluateShiftEnsemble(
     finalEvidenceScore >= 60 &&
     Math.abs(medianDelta) >= 8 &&
     demandIndependenceScore >= 40 &&
-    persistenceScore >= 50;
+    persistenceScore >= 50 &&
+    !seasonalityEval.isSeasonalDip;
 
   // Metrics that did not change
   const metricsThatDidNotChange: string[] = [];
@@ -251,6 +280,10 @@ export function evaluateShiftEnsemble(
     surfaceMovements,
     metricsThatDidNotChange,
     alternativeExplanations,
+    bayesianEvidence: {
+      ...bayesianResult,
+      changePointDate: new Date().toISOString().split("T")[0],
+    },
     whatChanged,
     whereItChanged,
     whoAppearsAffected,

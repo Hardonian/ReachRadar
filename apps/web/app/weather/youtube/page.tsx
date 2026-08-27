@@ -1,6 +1,7 @@
+"use client";
+
 import Link from "next/link";
-import { Metadata } from "next";
-import { Logo, WeatherGauge, SurfaceCard, ShiftBadge } from "@reachradar/ui";
+import { Logo, WeatherGauge, SurfaceCard, ShiftBadge, SeismographTicker, RadarScanner } from "@reachradar/ui";
 import { DEMO_PUBLIC_SHIFTS } from "@reachradar/providers";
 import {
   Radar,
@@ -12,13 +13,10 @@ import {
   Share2,
   ExternalLink,
   Lock,
+  Sparkles,
+  Radio,
+  Globe,
 } from "lucide-react";
-
-export const metadata: Metadata = {
-  title: "YouTube Algorithm Weather Today | ReachRadar",
-  description:
-    "Independent observability and real-time distribution volatility across YouTube Browse, Suggested, Search, and Shorts.",
-};
 
 export default function PublicYouTubeWeatherPage() {
   return (
@@ -30,20 +28,27 @@ export default function PublicYouTubeWeatherPage() {
             <Logo size="md" />
           </Link>
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
-            <Link href="/weather/youtube" className="text-emerald-400 font-bold">
+            <Link href="/weather/youtube" className="text-sky-400 font-bold">
               Weather Station
             </Link>
-            <Link href="/methodology" className="hover:text-emerald-400">
+            <Link href="/methodology" className="hover:text-sky-400">
               Methodology
             </Link>
-            <Link href="/pricing" className="hover:text-emerald-400">
+            <Link href="/pricing" className="hover:text-sky-400">
               Pricing
             </Link>
           </nav>
           <div className="flex items-center gap-3">
             <Link
+              href="/app/simulator"
+              className="px-3.5 py-1.5 rounded-lg border border-slate-800 bg-slate-900 text-xs font-mono text-slate-300 hover:text-white flex items-center gap-1.5"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-sky-400" />
+              <span>AI Simulator</span>
+            </Link>
+            <Link
               href="/app/onboarding"
-              className="rounded-lg bg-emerald-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-400 font-mono transition-all shadow-md"
+              className="rounded-lg bg-sky-500 px-4 py-2 text-xs font-bold text-white hover:bg-sky-400 font-mono transition-all shadow-md"
             >
               Connect Channel →
             </Link>
@@ -51,23 +56,23 @@ export default function PublicYouTubeWeatherPage() {
         </div>
       </header>
 
-      <main id="main-content" className="flex-1 container mx-auto px-4 py-10 max-w-7xl">
+      <main id="main-content" className="flex-1 container mx-auto px-4 py-10 max-w-7xl space-y-8">
         {/* Title & Live Status */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider">
-                Public Algorithm Telemetry
+              <span className="text-xs font-mono font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                <Radio className="w-3.5 h-3.5 text-sky-400" /> Public Observability Stream
               </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                DEMO DATA
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                LIVE TELEMETRY
               </span>
             </div>
             <h1 className="text-3xl md:text-4xl font-extrabold text-white mt-1">
               YouTube Algorithm Weather Station
             </h1>
             <p className="text-sm text-slate-400 mt-1">
-              Observed recommendation volatility across 150+ opt-in creator channels.
+              Independent statistical observability across 150+ monitored creator channels and cross-cohort baselines.
             </p>
           </div>
 
@@ -89,29 +94,25 @@ export default function PublicYouTubeWeatherPage() {
           </div>
         </div>
 
+        {/* Live Seismograph Ticker */}
+        <SeismographTicker
+          initialRax={44.8}
+          initialDelta={3.2}
+          statusLabel="ELEVATED VOLATILITY"
+        />
+
         {/* Top Radar Gauges Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8">
-          {/* Main Weather Card */}
-          <div className="lg:col-span-5 rounded-2xl border border-slate-800 bg-[#0D1322] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden">
-            <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider mb-2">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Main Weather Card with Radar Scanner */}
+          <div className="lg:col-span-5 rounded-2xl border border-slate-800 bg-[#0D1322] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden space-y-4 shadow-xl">
+            <div className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wider">
               YouTube Platform Volatility (All Surfaces)
             </div>
-            <WeatherGauge score={27} size="lg" />
-            <div className="mt-6 pt-4 border-t border-slate-800/80 w-full flex items-center justify-around text-xs font-mono text-slate-400">
-              <div>
-                <span className="text-slate-500 block text-[10px]">7-Day Mean</span>
-                <span className="text-slate-200 font-bold">24 / 100</span>
-              </div>
-              <div className="h-6 w-px bg-slate-800" />
-              <div>
-                <span className="text-slate-500 block text-[10px]">30-Day Peak</span>
-                <span className="text-amber-400 font-bold">62 / 100</span>
-              </div>
-              <div className="h-6 w-px bg-slate-800" />
-              <div>
-                <span className="text-slate-500 block text-[10px]">Baseline Shift</span>
-                <span className="text-emerald-400 font-bold">Stable</span>
-              </div>
+
+            <RadarScanner activeAnomaliesCount={2} sweepSpeedSeconds={4} />
+
+            <div className="text-xs font-mono text-slate-300">
+              Composite Volatility Index: <strong className="text-white">44.8 / 100</strong>
             </div>
           </div>
 
@@ -119,21 +120,21 @@ export default function PublicYouTubeWeatherPage() {
           <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <SurfaceCard
               surfaceName="Browse Features"
-              score={18}
-              deltaPercentage={-1.2}
-              cohortDeltaPercentage={-0.8}
+              score={68}
+              deltaPercentage={-18.7}
+              cohortDeltaPercentage={-16.2}
             />
             <SurfaceCard
               surfaceName="Suggested Videos"
-              score={31}
-              deltaPercentage={3.4}
-              cohortDeltaPercentage={1.2}
+              score={42}
+              deltaPercentage={6.4}
+              cohortDeltaPercentage={4.1}
             />
             <SurfaceCard
               surfaceName="YouTube Search"
-              score={22}
-              deltaPercentage={-0.5}
-              cohortDeltaPercentage={0.1}
+              score={18}
+              deltaPercentage={0.8}
+              cohortDeltaPercentage={0.2}
             />
             <SurfaceCard
               surfaceName="Shorts Feed"
@@ -145,17 +146,17 @@ export default function PublicYouTubeWeatherPage() {
         </div>
 
         {/* Active Detected Shifts List */}
-        <div className="mt-12">
-          <div className="flex items-center justify-between mb-4">
+        <div className="space-y-4 pt-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-bold text-white">Active Detected Shifts</h2>
+              <h2 className="text-xl font-bold text-white font-mono">Active Detected Shifts</h2>
               <p className="text-xs text-slate-400">
                 Cohorts meeting the strict privacy threshold (&ge;25 channels, &ge;10 owners).
               </p>
             </div>
             <Link
               href="/methodology"
-              className="text-xs font-mono text-emerald-400 hover:underline flex items-center gap-1"
+              className="text-xs font-mono text-sky-400 hover:underline flex items-center gap-1"
             >
               <span>How shifts are calculated</span>
               <ExternalLink className="w-3 h-3" />
@@ -166,7 +167,7 @@ export default function PublicYouTubeWeatherPage() {
             {DEMO_PUBLIC_SHIFTS.map((shift) => (
               <div
                 key={shift.id}
-                className="rounded-xl border border-slate-800 bg-[#0D1322] p-5 md:p-6 transition-all hover:border-slate-700"
+                className="rounded-2xl border border-slate-800 bg-[#0D1322] p-5 md:p-6 transition-all hover:border-slate-700 shadow-xl"
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/60 pb-4">
                   <div>
@@ -181,8 +182,8 @@ export default function PublicYouTubeWeatherPage() {
                     </div>
                     <h3 className="text-lg font-bold text-white mt-1">
                       <Link
-                        href={`/weather/youtube/shifts/${shift.slug}`}
-                        className="hover:text-emerald-400 transition-colors"
+                        href={`/app/shifts/${shift.id}`}
+                        className="hover:text-sky-400 transition-colors"
                       >
                         {shift.title}
                       </Link>
@@ -210,8 +211,8 @@ export default function PublicYouTubeWeatherPage() {
                   </div>
                   <div className="flex items-center justify-end">
                     <Link
-                      href={`/weather/youtube/shifts/${shift.slug}`}
-                      className="inline-flex items-center gap-1 text-emerald-400 font-bold hover:underline"
+                      href={`/app/shifts/${shift.id}`}
+                      className="inline-flex items-center gap-1 text-sky-400 font-bold hover:underline"
                     >
                       <span>Full Evidence Dossier</span>
                       <ArrowRight className="w-3.5 h-3.5" />
@@ -224,7 +225,7 @@ export default function PublicYouTubeWeatherPage() {
         </div>
 
         {/* Personalized Channel CTA Banner */}
-        <div className="mt-12 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/30 via-[#0D1322] to-slate-900 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+        <div className="rounded-2xl border border-sky-500/30 bg-gradient-to-r from-sky-950/30 via-[#0D1322] to-slate-900 p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl">
           <div className="max-w-xl">
             <h3 className="text-xl font-bold text-white">
               Is this shift affecting your channel?
@@ -235,7 +236,7 @@ export default function PublicYouTubeWeatherPage() {
           </div>
           <Link
             href="/app/onboarding"
-            className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-slate-950 hover:bg-emerald-400 transition-all font-mono shrink-0 shadow-lg"
+            className="rounded-xl bg-sky-500 px-6 py-3 text-sm font-bold text-white hover:bg-sky-400 transition-all font-mono shrink-0 shadow-lg"
           >
             Check My Personal Impact →
           </Link>

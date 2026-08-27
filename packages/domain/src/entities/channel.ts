@@ -59,6 +59,8 @@ export interface YouTubeChannel {
   updatedAt: string;
 }
 
+export type Channel = YouTubeChannel;
+
 export interface YouTubeVideo {
   id: string;
   channelId: string;
