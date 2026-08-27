@@ -131,3 +131,8 @@ export function calculateShannonEntropy(counts: number[]): number {
   const maxEntropy = Math.log2(counts.length);
   return maxEntropy > 0 ? entropy / maxEntropy : 0;
 }
+
+export const mad = medianAbsoluteDeviation;
+export const herfindahlIndex = calculateHerfindahlIndex;
+export const shannonEntropy = calculateShannonEntropy;
+
