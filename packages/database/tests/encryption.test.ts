@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { TokenEncryptionService } from "../src/crypto/encryption";
+import { TokenEncryptionService } from "../src/crypto/encryption.js";
 
 describe("Token Encryption Service (AES-256-GCM)", () => {
   const secretKey = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef";
@@ -11,7 +11,7 @@ describe("Token Encryption Service (AES-256-GCM)", () => {
 
     expect(encrypted.ciphertext).toBeDefined();
     expect(encrypted.iv).toBeDefined();
-    expect(encrypted.tag).toBeDefined();
+    expect(encrypted.authTag).toBeDefined();
     expect(encrypted.keyVersion).toBe("v1");
     expect(encrypted.ciphertext).not.toBe(rawToken);
 
@@ -25,7 +25,7 @@ describe("Token Encryption Service (AES-256-GCM)", () => {
 
     const tampered = {
       ...encrypted,
-      tag: "00000000000000000000000000000000",
+      authTag: "00000000000000000000000000000000",
     };
 
     expect(() => service.decrypt(tampered)).toThrow();

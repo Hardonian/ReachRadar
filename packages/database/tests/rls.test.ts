@@ -20,6 +20,8 @@ describe("Row Level Security (RLS) Tenant Isolation", () => {
       id: "org_a",
       name: "Organization A",
       slug: "org-a",
+      planId: "creator",
+      deletedAt: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -29,6 +31,7 @@ describe("Row Level Security (RLS) Tenant Isolation", () => {
       userId: "user_a",
       role: "owner",
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
     db.channels.set("ch_a", {
       id: "ch_a",
@@ -43,7 +46,7 @@ describe("Row Level Security (RLS) Tenant Isolation", () => {
       niche: "finance",
       sizeBand: "macro",
       contentFormat: "long_form",
-      dataQualityTier: "ROBUST",
+      dataQualityTier: "robust",
       baselineStatus: "ready",
       isActive: true,
       lastSynchronizedAt: new Date().toISOString(),
@@ -64,6 +67,8 @@ describe("Row Level Security (RLS) Tenant Isolation", () => {
       id: "org_b",
       name: "Organization B",
       slug: "org-b",
+      planId: "creator",
+      deletedAt: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     });
@@ -73,6 +78,7 @@ describe("Row Level Security (RLS) Tenant Isolation", () => {
       userId: "user_b",
       role: "owner",
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     });
     db.channels.set("ch_b", {
       id: "ch_b",
@@ -87,7 +93,7 @@ describe("Row Level Security (RLS) Tenant Isolation", () => {
       niche: "technology",
       sizeBand: "mid",
       contentFormat: "long_form",
-      dataQualityTier: "ROBUST",
+      dataQualityTier: "robust",
       baselineStatus: "ready",
       isActive: true,
       lastSynchronizedAt: new Date().toISOString(),
