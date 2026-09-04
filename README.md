@@ -1,5 +1,9 @@
 # ReachRadar
 
+<!-- BEGIN: REPO HERO -->
+![ReachRadar — hero generated locally on the GPU stack](assets/repo-hero.png)
+<!-- END: REPO HERO -->
+
 > **Independent Observability for Recommendation Algorithms**  
 > *Know when distribution shifts — before your strategy does.*
 
